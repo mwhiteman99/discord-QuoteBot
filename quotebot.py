@@ -12,19 +12,6 @@ bot = commands.Bot(command_prefix='!')
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user.name}'.format(bot))
-    quote_of_the_day.start()
-
-async def create_channel(guild):
-    print('no channel found // creating channel...')
-    overwrites = {
-        guild.default_role: discord.PermissionOverwrite(send_messages=False),
-        guild.me: discord.PermissionOverwrite(send_messages=True)
-    }
-    await guild.create_text_channel('out-of-context-quotes', overwrites=overwrites)
-
-
-@tasks.loop(hours=24)
-async def quote_of_the_day():
     for guild in bot.guilds:
         generalChannel = discord.utils.get(guild.channels, name='general')
         quoteChannel = discord.utils.get(guild.channels, name='out-of-context-quotes')
@@ -39,6 +26,14 @@ async def quote_of_the_day():
         time = time.strftime("On %A, %B %d, %Y at %I:%M%p ")
         response = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nQUOTE OF THE DAY:\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{0}{1}'.format(time, responseContent)
         await generalChannel.send(response)
+
+async def create_channel(guild):
+    print('no channel found // creating channel...')
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(send_messages=False),
+        guild.me: discord.PermissionOverwrite(send_messages=True)
+    }
+    await guild.create_text_channel('out-of-context-quotes', overwrites=overwrites)
 
 @bot.command(name='quote', help='TTS an out of context quote // Optional argument to search for a quote with given keyword')
 async def reciteQuote(ctx, name=None):
